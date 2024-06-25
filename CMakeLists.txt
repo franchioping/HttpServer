@@ -3,8 +3,8 @@ project(HttpServer C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(HttpServer main.c
-        handle_client.c
-        handle_client.h
-        util.c
-        util.h)
+add_executable(HttpServer src/main.c
+        src/handle_client.c
+        src/handle_client.h
+        src/util.c
+        src/util.h)

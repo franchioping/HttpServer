@@ -17,10 +17,11 @@ int main(void) {
 
     const int enable = 1;
     if (setsockopt(serv_sock_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-        printf("setsockopt(SO_REUSEADDR) failed");
+        printf("setsockopt(SO_REUSEADDR) Failed");
+
+
+
     printf("Created Socket File Descriptor Successfully.\n");
-
-
 
     struct sockaddr_in server_addr;
 
