@@ -10,13 +10,25 @@
 #include <sys/socket.h>
 
 
-#include "util.h"
+#include "../util/util.h"
 
 #define BUFF_SIZE 128
 #define MAX_BUFF_SIZE 8192
 
+void print_request(char** lines, ssize_t lines_count, const char* prefix);
+bool check_if_request_end(const char* data, ssize_t data_length);
+char** request_get_lines_from_buff(const char* buff, size_t buff_len, ssize_t * lines_count);
 
-bool check_if_request_end(char* data, ssize_t data_length){
+
+void print_request(char** lines, ssize_t lines_count, const char* prefix){
+    for(ssize_t i = 0; i < lines_count; i++){
+        char* line = lines[i];
+        printf("%s%s\n", prefix, line);
+
+    }
+}
+bool check_if_request_end(const char* data, ssize_t data_length){
+
     char* end = "\r\n\r\n";
     for(int i = 0; i < 4; i++){
         if(end[i] != data[data_length - 4 + i])
@@ -25,14 +37,16 @@ bool check_if_request_end(char* data, ssize_t data_length){
     return true;
 
 }
-
-char** request_get_lines_from_buff(const char* buff, size_t buff_len, int* lines_count){
-    int line_count = 0;
+char** request_get_lines_from_buff(const char* buff, size_t buff_len, ssize_t * lines_count){
+    ssize_t line_count = 0;
     for(int i = 0; i < buff_len-1; i++){
         if(buff[i] == '\r' && buff[i+1]=='\n')
             line_count ++;
     }
     char** lines = (char**) malloc(sizeof(char*) * line_count);
+    if(lines == NULL){
+        return NULL;
+    }
     int line_start = 0;
     int line_num = 0;
     for(int i = 0; i < buff_len; i++){
@@ -49,9 +63,11 @@ char** request_get_lines_from_buff(const char* buff, size_t buff_len, int* lines
     *lines_count = line_count;
     return lines;
 }
-
 ssize_t receive_data(int client_fd, char** data){
     char* buff = (char*) malloc(BUFF_SIZE);
+    if(buff == NULL){
+        return -1;
+    }
     int buff_size = BUFF_SIZE;
     while(true){
         ssize_t msg_length = recv(client_fd, &buff[buff_size-BUFF_SIZE], BUFF_SIZE, 0);
@@ -91,7 +107,7 @@ void handle_client(void* arg){
 
     // Set time-out on recv
     struct timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = 1;
     tv.tv_usec = 0;
     if(setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv) < 0)
         printf("setsockopt(SO_RCVTIMEO) Failed.");
@@ -104,14 +120,15 @@ void handle_client(void* arg){
     printf("Request Lenght: %lu\n", data_length);
     printf("Request:\n");
 
-    int lines_count = 0;
+    ssize_t lines_count = 0;
     char** lines = request_get_lines_from_buff(data, data_length, &lines_count);
-
-    for(int i = 0; i < lines_count; i++){
-        char* line = lines[i];
-        printf("    %s\n", line);
-
+    if(lines == NULL){
+        printf("Failed to get lines from buffer. Aborting...");
+        return;
     }
+
+    print_request(lines, lines_count, "   ");
+
 
 
 
