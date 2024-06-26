@@ -13,13 +13,17 @@ set(COMMON_SOURCES src/request/handle_client.c
         src/request/headers.c
         src/request/headers.h
         src/util/linkedlist/linkedlist.c
-        src/util/linkedlist/linkedlist.h)
+        src/util/linkedlist/linkedlist.h
+        src/http/message.c
+        src/http/message.h
+)
 
-set(TARGET_SOURCES src/main.c)
+set(TARGET_SOURCES src/main.c
+        )
 
 set(TEST_SOURCES src/test/test_main.c
-        src/test/linked_list.c
-        src/test/linked_list.h)
+        src/test/test_linked_list.c
+        src/test/test_linked_list.h)
 
 add_executable(HttpServer ${COMMON_SOURCES} ${TARGET_SOURCES})
 

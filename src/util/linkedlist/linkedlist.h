@@ -8,15 +8,16 @@
 #include <sys/types.h>
 
 typedef struct listnode {
-    struct listnode* next_node;
+    struct listnode* next;
     void* data;
 } listnode;
 
-listnode* list_get_at_index(listnode* list_start, ssize_t index);
-ssize_t list_get_length(listnode* list_start);
-void list_free(listnode* list_start);
+listnode* lnkdList_GetNth(listnode* head, ssize_t index);
+ssize_t lnkdList_GetLength(listnode* head);
+void lnkdList_Free(listnode* head);
 
 
-
+listnode* lnkdList_FromIntArray(ssize_t length, int* data);
+listnode* lnkdList_FromPtrArray(ssize_t length, void** data);
 
 #endif //HTTPSERVER_LINKEDLIST_H

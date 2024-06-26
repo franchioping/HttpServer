@@ -5,7 +5,8 @@
 #include <check.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "linked_list.h"
+#include <mcheck.h>
+#include "test_linked_list.h"
 
 
 int run_suite(Suite* suite){
@@ -17,7 +18,10 @@ int run_suite(Suite* suite){
     return no_failed;
 }
 
+void no_op(enum mcheck_status status) {}
+
 int main(void) {
+    mcheck(&no_op);
     int no_failed = 0;
 
     no_failed += run_suite(linked_list_suite());
